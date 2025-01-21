@@ -7,7 +7,7 @@ const AboutMe: React.FC = () => {
     <section>
       <h2>About Me</h2>
       <img 
-        src="src\assets\366017249_10224441619050091_4238439204750573288_n.jpg" 
+        src="\assets\366017249_10224441619050091_4238439204750573288_n.jpg" 
         alt="Developer" 
         className="profile-pic"
       />
