@@ -1,13 +1,13 @@
 import React from 'react';
-import { FaJava, FaHtml5, FaCss3Alt, FaReact } from 'react-icons/fa';
-import { SiMysql, SiTypescript } from 'react-icons/si';
+import { FaJava, FaHtml5, FaCss3Alt, FaReact, FaPython } from 'react-icons/fa';
+import { SiMysql, SiTypescript, SiPostgresql, SiRender, SiJsonwebtokens } from 'react-icons/si';
 
 const AboutMe: React.FC = () => {
   return (
     <section>
       <h2>About Me</h2>
       <img 
-        src="\assets\366017249_10224441619050091_4238439204750573288_n.jpg" 
+        src="/assets/366017249_10224441619050091_4238439204750573288_n.jpg" 
         alt="Developer" 
         className="profile-pic"
       />
@@ -21,6 +21,10 @@ const AboutMe: React.FC = () => {
         <FaReact size={40} title="React" />
         <SiMysql size={40} title="SQL" />
         <SiTypescript size={40} title="TypeScript" />
+        <FaPython size={40} title="Python" />
+        <SiPostgresql size={40} title="PostgreSQL" />
+        <SiRender size={40} title="Render" />
+        <SiJsonwebtokens size={40} title="JWT" />
       </div>
     </section>
   );

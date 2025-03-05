@@ -1,9 +1,17 @@
 import React from 'react';
 import Project from '../components/Project';
-import { FaJs, FaNodeJs, FaDatabase } from 'react-icons/fa';
+import { FaJs, FaNodeJs, FaDatabase, FaReact } from 'react-icons/fa';
+import { SiPostgresql } from 'react-icons/si';
 
 const Portfolio: React.FC = () => {
   const projects = [
+    {
+      title: 'Kanba Board Project',
+      images: ['/assets/kanbaboard-1.jpg', '/assets/kanbaboard-2.jpg'],
+      deployedLink: 'https://github.com/sieke13/Develop14.git',
+      description: 'A Kanban board application for task management. Made with React, PostgreSQL, and SQL.',
+      icons: [<FaReact key="react" title="React" />, <SiPostgresql key="postgresql" title="PostgreSQL" />, <FaDatabase key="sql" title="SQL" />],
+    },
     {
       title: 'Read Gerard Gen',
       image: '/assets/readmegen.jpg',
