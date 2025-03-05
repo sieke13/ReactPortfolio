@@ -12,7 +12,7 @@ const AboutMe: React.FC = () => {
         className="profile-pic"
       />
       <p>
-        I'm a 36-year-old developer passionate about building dynamic and responsive web applications. With knowledge in Java, CSS, React, SQL, and HTML, I craft seamless digital experiences. I enjoy problem-solving, learning new technologies, and creating user-friendly web solutions.
+        I'm a 36-year-old developer passionate about building dynamic and responsive web applications. With knowledge in Java, CSS, React, SQL,Python, Postgresql, Render,  and HTML, I craft seamless digital experiences. I enjoy problem-solving, learning new technologies, and creating user-friendly web solutions.
       </p>
       <div className="icons">
         <FaJava size={40} title="Java" />
