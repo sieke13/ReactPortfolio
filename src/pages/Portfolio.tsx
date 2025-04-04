@@ -1,16 +1,22 @@
 import React from 'react';
 import Project from '../components/Project';
 import { FaJs, FaNodeJs, FaDatabase, FaReact } from 'react-icons/fa';
-import { SiPostgresql } from 'react-icons/si';
+import { SiPostgresql, SiMongodb } from 'react-icons/si';
 
 const Portfolio: React.FC = () => {
   const projects = [
     {
-      title: 'Kanba Board Project',
-      images: ['/assets/kanbaboard-1.jpg', '/assets/kanbaboard1-2.jpg'],
-      deployedLink: 'https://github.com/sieke13/Develop14.git',
-      description: 'A Kanban board application for task management. Made with React, PostgreSQL, and SQL.',
-      icons: [<FaReact key="react" title="React" />, <SiPostgresql key="postgresql" title="PostgreSQL" />, <FaDatabase key="sql" title="SQL" />],
+      title: 'BingBong Mood Tracker',
+      images: ['assets/426808754-a613c71c-c818-4b61-be42-6b29cf88e4b2.png'],
+      deployedLink: 'https://bing-bong-mood-tracker-pozd.onrender.com',
+      description: 'The primary goal of this application is to provide users with a personal tool to track and improve their habits. This is not a medical application and should not be used as such. If you are experiencing depression or emotional distress, please seek professional help—you are not alone..',
+      icons: [<FaReact key="react" title="React" />, <SiPostgresql key="postgresql" title="PostgreSQL" />, <FaDatabase key="sql" title="SQL" />, <SiMongodb key="mongodb" title="MongoDB" />],
+    },    {
+      title: 'Google Books Search',
+      images: ['assets/googlebooks1 (1).jpg'],
+      deployedLink: 'https://challenge18-main.onrender.com/',
+      description: 'Search engine with login and function to save or delete books.',
+      icons: [<FaReact key="react" title="React" />, <SiPostgresql key="postgresql" title="PostgreSQL" />, <FaDatabase key="sql" title="SQL" />, <SiMongodb key="mongodb" title="MongoDB" />],
     },
     {
       title: 'Read Gerard Gen',
