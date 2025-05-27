@@ -49,7 +49,7 @@ const Portfolio: React.FC = () => {
   ];
 
   return (
-    <section>
+    <section className="pdf-section">
       <h2>Portfolio</h2>
       {projects.map((project, index) => (
         <div key={index} className="project">
