@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { generatePortfolioPDF } from '../utils/pdfGenerator';
+
 
 const Resume: React.FC = () => {
   const [downloadError, setDownloadError] = useState<string | null>(null);
@@ -19,14 +19,7 @@ const Resume: React.FC = () => {
       });
   };
 
-  const handlePortfolioPDF = () => {
-    try {
-      generatePortfolioPDF();
-    } catch (error) {
-      console.error('Error generating portfolio PDF:', error);
-      setDownloadError('Error generating portfolio PDF. Please try again later.');
-    }
-  };
+
 
   return (
     <section className="pdf-section">
