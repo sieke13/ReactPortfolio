@@ -7,7 +7,7 @@ const Resume: React.FC = () => {
   
   const handleResumeClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     // Check if file exists by making a HEAD request
-    fetch('publi/assets/Juan Gerardo Avendaño Calderón - CV.pdf', { method: 'HEAD' })
+    fetch('dist/assets/Juan Gerardo Avendaño Calderón - CV.pdf', { method: 'HEAD' })
       .then(response => {
         if (!response.ok) {
           e.preventDefault();
@@ -75,7 +75,7 @@ const Resume: React.FC = () => {
           Comprehensive overview of my technical expertise and professional capabilities as a Full-Stack Developer.
         </p>        <div className="resume-header">          <div className="resume-actions">
             <a 
-              href="public\assets\Juan Gerardo Avendaño Calderón - CV.pdf" 
+              href="./public/assets/Juan Gerardo Avendaño Calderón - Full-Stack Developer & Data AnalystENG.pdf" 
               download 
               className="download-button"
               onClick={handleResumeClick}
