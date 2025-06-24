@@ -75,7 +75,7 @@ const Resume: React.FC = () => {
           Comprehensive overview of my technical expertise and professional capabilities as a Full-Stack Developer.
         </p>        <div className="resume-header">          <div className="resume-actions">
             <a 
-              href="./public/assets/Juan Gerardo Avendaño Calderón - Full-Stack Developer & Data AnalystENG.pdf" 
+              href="/public/assets/Juan Gerardo Avendaño Calderón - Full-Stack Developer & Data AnalystENG.pdf" 
               download 
               className="download-button"
               onClick={handleResumeClick}
