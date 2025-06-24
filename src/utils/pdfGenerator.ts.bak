@@ -1,0 +1,766 @@
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
+// For TypeScript: Define a type for our extended window object
+declare global {
+  interface Window {
+    pdfDebugLog?: (message: string) => void;
+  }
+}
+
+// Define the finalization function for code organization
+const finalizeWithCanvas = async (
+  canvas: HTMLCanvasElement, 
+  pdfDoc: jsPDF, 
+  pageWidth: number, 
+  pageHeight: number
+): Promise<string> => {
+  console.log('Canvas captured, creating PDF...', canvas.width, canvas.height);
+  
+  // Get image data from canvas with high quality
+  const imgData = canvas.toDataURL('image/jpeg', 1.0);
+  const imgWidth = pageWidth;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  
+  // Add image to PDF with compression options for better quality
+  pdfDoc.addImage({
+    imageData: imgData,
+    x: 0,
+    y: 0,
+    width: imgWidth,
+    height: imgHeight,
+    compression: 'FAST',
+    rotation: 0,
+    format: 'JPEG'
+  });
+  
+  // If content is too tall, add additional pages
+  if (imgHeight > pageHeight) {
+    const totalPages = Math.ceil(imgHeight / pageHeight);
+    console.log(`Content spans ${totalPages} pages`);
+    
+    for (let i = 1; i < totalPages; i++) {
+      pdfDoc.addPage();
+      const yOffset = -pageHeight * i;
+      pdfDoc.addImage(imgData, 'JPEG', 0, yOffset, imgWidth, imgHeight);
+    }
+  }
+    // Save the PDF with a descriptive filename
+  const fileName = 'Juan_Gerardo_Avendaño_Calderón_Full_Stack_Developer_2025.pdf';
+  
+  // Create a Blob to allow manual download if automatic fails
+  const pdfBlob = pdfDoc.output('blob');
+  const blobUrl = URL.createObjectURL(pdfBlob);
+  
+  // Create a manual download link
+  const downloadLink = document.createElement('a');
+  downloadLink.href = blobUrl;
+  downloadLink.download = fileName;
+  downloadLink.style.display = 'none';
+  document.body.appendChild(downloadLink);
+  
+  // First try normal save method
+  pdfDoc.save(fileName);
+  
+  // Also trigger the manual download as fallback
+  setTimeout(() => {
+    downloadLink.click();
+    // Clean up
+    setTimeout(() => {
+      URL.revokeObjectURL(blobUrl);
+      document.body.removeChild(downloadLink);
+    }, 100);
+  }, 1000);
+  
+  console.log('PDF generated successfully:', fileName);
+  return fileName;
+};
+
+// Simple fallback implementation
+const createSimplifiedPDF = async (): Promise<string> => {
+  console.log('Creating simplified PDF as a fallback...');
+  
+  // Create a new PDF document
+  const pdfDoc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4',
+    compress: true
+  });
+  
+  // Add basic text content
+  pdfDoc.setFontSize(20);
+  pdfDoc.setTextColor(11, 22, 41); // Dark blue for header text
+  pdfDoc.text('Juan Gerardo Avendaño Calderón', 20, 30);
+  
+  pdfDoc.setFontSize(16);
+  pdfDoc.setTextColor(26, 58, 106); // Medium blue for subheader
+  pdfDoc.text('Full-Stack Developer & Data Analyst', 20, 40);
+  
+  pdfDoc.setFontSize(12);
+  pdfDoc.setTextColor(33, 33, 33); // Dark gray for body text
+  
+  // Add contact information
+  pdfDoc.text('Email: jg.avendano.calderon@gmail.com', 20, 60);
+  pdfDoc.text('Phone: +52 55 2959 8886', 20, 68);
+  pdfDoc.text('LinkedIn: juangera.aven90', 20, 76);
+  
+  // Add a note about PDF generation
+  pdfDoc.setFontSize(10);
+  pdfDoc.setTextColor(120, 120, 120);
+  pdfDoc.text('Note: This is a simplified version of the resume due to technical limitations.', 20, 270);
+  pdfDoc.text('Please visit my portfolio website for the complete interactive version.', 20, 275);
+  
+  // Save the PDF
+  const fileName = 'Juan_Gerardo_Avendaño_Calderón_Simplified_CV.pdf';
+  pdfDoc.save(fileName);
+  
+  return fileName;
+};
+
+export const generateModernPortfolioPDF = async (debug: boolean = false): Promise<string> => {
+  let iframe: HTMLIFrameElement | null = null;
+  
+  try {
+    console.log('Starting PDF generation...');
+    
+    if (debug) {
+      console.log('DEBUG MODE: Detailed logging enabled');
+      // Add debug UI element to show progress
+      const debugElement = document.createElement('div');
+      debugElement.style.position = 'fixed';
+      debugElement.style.bottom = '20px';
+      debugElement.style.right = '20px';
+      debugElement.style.background = '#f1f5fa';
+      debugElement.style.border = '1px solid #3b82f6';
+      debugElement.style.borderRadius = '5px';
+      debugElement.style.padding = '10px';
+      debugElement.style.width = '300px';
+      debugElement.style.zIndex = '9999';
+      debugElement.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
+      debugElement.style.fontFamily = 'monospace';
+      debugElement.innerHTML = '<h4>PDF Generation Progress</h4><div id="pdf-debug-log"></div>';
+      document.body.appendChild(debugElement);
+      
+      // Helper function to update debug log
+      window.pdfDebugLog = (message: string) => {
+        const logElement = document.getElementById('pdf-debug-log');
+        if (logElement) {
+          const logEntry = document.createElement('div');
+          logEntry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+          logElement.appendChild(logEntry);
+          // Auto-scroll to bottom
+          logElement.scrollTop = logElement.scrollHeight;
+        }
+        console.log(message);
+      };
+      
+      window.pdfDebugLog('Debug mode initialized');
+    }
+    
+    // Create a hidden iframe to render the HTML template
+    iframe = document.createElement('iframe');
+    iframe.style.position = 'absolute';
+    iframe.style.top = '-9999px';
+    iframe.style.left = '-9999px';
+    iframe.style.width = '210mm';
+    iframe.style.height = '297mm';
+    iframe.style.border = 'none';
+    iframe.style.background = 'white';
+    // Set sandbox attribute to allow scripts but prevent navigation
+    iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts');
+    // Set CORS policies
+    iframe.setAttribute('crossorigin', 'anonymous');
+    // Add iframe to the document
+    document.body.appendChild(iframe);    // Fetch the CV template (use the simplified template that's working)
+    const response = await fetch('./cv-template-pdf.html');
+    if (!response.ok) {
+      // If the simplified template doesn't exist, fall back to the original
+      const originalResponse = await fetch('./cv-template.html');
+      if (!originalResponse.ok) {
+        throw new Error(`Failed to fetch CV template: ${originalResponse.status}`);
+      }
+      const htmlContent = await originalResponse.text();
+      console.log('Using original CV template');
+      return htmlContent;
+    }
+    
+    const htmlContent = await response.text();
+    console.log('Using simplified PDF template');
+    console.log('CV template loaded successfully');
+    
+    // Wait for iframe to be ready
+    await new Promise(resolve => setTimeout(resolve, 500));    // Modify HTML content to replace problematic background gradients with solid colors
+    const modifiedHtmlContent = htmlContent
+      // Completely remove all gradient backgrounds
+      .replace(/background:\s*linear-gradient\([^)]+\)/g, 'background: #0b1629')
+      .replace(/background-image:\s*linear-gradient\([^)]+\)/g, 'background-image: none; background-color: #0b1629')
+      .replace(/background:\s*radial-gradient\([^)]+\)/g, 'background: #ffffff')
+      .replace(/background-image:\s*radial-gradient\([^)]+\)/g, 'background-image: none')
+      // Add strong fallback background colors
+      .replace(/.header\s*{([^}]*)}/g, '.header { $1 background-color: #0b1629 !important; }')
+      .replace(/.right-column\s*{([^}]*)}/g, '.right-column { $1 background-color: #f1f5fa !important; }')
+      // Remove problematic pseudo-elements that might have gradients
+      .replace(/\.header::before\s*{[^}]*}/g, '.header::before { display: none !important; }')
+      // Add !important to all profile-photo styles to ensure they work
+      .replace(/\.profile-photo\s*{([^}]*)}/g, '.profile-photo { $1 display: block !important; width: 120px !important; height: 120px !important; }')
+      .replace(/\.header::after\s*{[^}]*}/g, '.header::after { display: none !important; }');
+
+    // Write HTML content to iframe
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!iframeDoc) throw new Error('Cannot access iframe document');
+    
+    iframeDoc.open();
+    iframeDoc.write(modifiedHtmlContent);
+    iframeDoc.close();
+
+    console.log('Modified HTML content written to iframe');
+
+    // Wait for fonts to load
+    await new Promise(resolve => {
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(resolve);
+      } else {
+        // Fallback for browsers without Font Loading API
+        setTimeout(resolve, 3000);
+      }
+    });
+    
+    // Additional wait for resources to load
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    // Get the CV container from iframe
+    const cvContainer = iframeDoc.querySelector('.cv-container') as HTMLElement;
+    if (!cvContainer) throw new Error('CV container not found in iframe');
+
+    console.log('Capturing content as canvas...');
+    
+    // Additional measure to fix CSS gradient issues
+    const elementsWithGradients = iframeDoc.querySelectorAll('[style*="gradient"], [class*="header"], [class*="sidebar"]');
+    elementsWithGradients.forEach((el: Element) => {
+      if (el instanceof HTMLElement) {
+        // Get computed style
+        const computedStyle = getComputedStyle(el);
+        
+        // If there's a gradient, replace it with a solid color
+        if (computedStyle.backgroundImage.includes('gradient')) {
+          el.style.backgroundImage = 'none';
+          
+          // Set a solid background color instead
+          if (el.classList.contains('header')) {
+            el.style.backgroundColor = '#0b1629';
+          } else if (el.classList.contains('right-column')) {
+            el.style.backgroundColor = '#f1f5fa';
+          } else {
+            el.style.backgroundColor = '#ffffff';
+          }
+        }
+      }
+    });
+    
+    // Pre-load all images to ensure they're ready before canvas rendering
+    const images = Array.from(iframeDoc.querySelectorAll('img'));
+    await Promise.all(images.map(img => {
+      // Force width and height on images
+      if (img.src && !img.width) img.width = 120;
+      if (img.src && !img.height) img.height = 120;
+      
+      if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+      return new Promise<void>((resolve) => {
+        img.onload = () => resolve();
+        img.onerror = () => {
+          console.warn(`Failed to load image: ${img.src}`);
+          resolve(); // Resolve anyway to continue
+        };
+        
+        // Ensure image has proper src
+        if (!img.src || img.src === 'about:blank') {
+          img.style.display = 'none';
+          resolve();
+        }
+      });
+    }));
+    
+    // Force dimensions on the container to ensure proper rendering
+    cvContainer.style.width = '210mm';
+    cvContainer.style.minHeight = '297mm';
+    // Wait to ensure all styles apply
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Create PDF document
+    const pdfDoc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4',
+      compress: true
+    });
+    
+    // Define A4 dimensions
+    const pageWidth = pdfDoc.internal.pageSize.getWidth();
+    const pageHeight = pdfDoc.internal.pageSize.getHeight();
+    
+    try {
+      // Force solid background colors on all elements to prevent gradient issues
+      const allElements = iframeDoc.querySelectorAll('*');
+      allElements.forEach((element) => {
+        if (element instanceof HTMLElement) {
+          const style = window.getComputedStyle(element);
+          // If there's a background image or gradient, replace it
+          if (style.backgroundImage && style.backgroundImage !== 'none') {
+            element.style.backgroundImage = 'none';
+            
+            // Apply solid background based on element type/class
+            if (element.classList.contains('header') || 
+                element.classList.contains('header-container') || 
+                element.tagName === 'HEADER') {
+              element.style.backgroundColor = '#0b1629';
+            } else if (element.classList.contains('right-column') || 
+                       element.classList.contains('sidebar')) {
+              element.style.backgroundColor = '#f1f5fa';
+            } else if (style.backgroundColor === 'transparent' || 
+                       style.backgroundColor === 'rgba(0, 0, 0, 0)') {
+              element.style.backgroundColor = '#ffffff';
+            }
+          }
+        }
+      });
+      
+      // Fix any images with zero dimensions
+      const allImages = iframeDoc.querySelectorAll('img');
+      allImages.forEach((img: Element) => {
+        if (img instanceof HTMLImageElement) {
+          if (!img.width || !img.height) {
+            img.width = 120;
+            img.height = 120;
+            console.log('Fixed image dimensions for', img.src);
+          }
+        }
+      });
+      
+      // Use a more robust approach with specific width/height to ensure no zero dimensions
+      const clonedContainer = cvContainer.cloneNode(true) as HTMLElement;
+      const containerWidth = 794; // A4 width in pixels at 96 DPI (210mm)
+      const containerHeight = 1123; // A4 height in pixels at 96 DPI (297mm)
+      
+      // Set explicit dimensions on the cloned container
+      clonedContainer.style.width = `${containerWidth}px`;
+      clonedContainer.style.height = `${containerHeight}px`;
+      clonedContainer.style.position = 'absolute';
+      clonedContainer.style.top = '-9999px';
+      clonedContainer.style.left = '-9999px';
+      document.body.appendChild(clonedContainer);
+      
+      // Fix all images in the cloned container to ensure they have dimensions
+      const clonedImages = clonedContainer.querySelectorAll('img');
+      clonedImages.forEach(img => {
+        if (img instanceof HTMLImageElement) {
+          // Force dimensions on all images
+          if (!img.width || img.width === 0) img.width = 120;
+          if (!img.height || img.height === 0) img.height = 120;
+          
+          // Add a white background to transparent images
+          img.style.backgroundColor = '#ffffff';
+          
+          // Explicitly set image rendering properties
+          img.style.imageRendering = 'auto';
+          img.style.objectFit = 'cover';
+          
+          // Force image to redraw by resetting its src (but keep the original)
+          const originalSrc = img.src;
+          if (originalSrc && originalSrc !== 'about:blank' && !originalSrc.startsWith('data:')) {
+            const tempImg = new Image();
+            tempImg.onload = () => {
+              img.src = originalSrc;
+            };
+            tempImg.src = originalSrc;
+          }
+        }
+      });
+      
+      // Apply explicit styles to prevent rendering issues
+      clonedContainer.querySelectorAll('*').forEach((el) => {
+        if (el instanceof HTMLElement) {
+          // Remove any transforms that might cause issues
+          el.style.transform = 'none';
+          
+          // Remove any transitions
+          el.style.transition = 'none';
+          
+          // Ensure all text is visible
+          el.style.color = el.style.color || 'inherit';
+          
+          // Ensure backgrounds are solid
+          if (window.getComputedStyle(el).backgroundImage !== 'none') {
+            el.style.backgroundImage = 'none';
+          }
+        }
+      });
+      
+      // Force redraw of problematic elements
+      const redrawElements = (rootEl: HTMLElement) => {
+        // Fix links that may cause rendering issues
+        const links = rootEl.querySelectorAll('a');
+        links.forEach(link => {
+          link.style.color = '#1a365d'; // Use solid color
+          link.style.textDecoration = 'none'; // Remove underline that might cause issues
+        });
+        
+        // Fix text with overflow
+        const textElements = rootEl.querySelectorAll('p, span, h1, h2, h3, h4, h5, h6');
+        textElements.forEach(el => {
+          if (el instanceof HTMLElement) {
+            el.style.overflow = 'visible';
+            el.style.whiteSpace = 'normal';
+          }
+        });
+      };
+      
+      // Apply additional fixes
+      redrawElements(clonedContainer);
+      
+      // Prepare the document for optimal PDF generation
+      const prepareDocumentForPDF = (container: HTMLElement): void => {
+        const allElements = container.querySelectorAll('*');
+        allElements.forEach((el: Element) => {
+          if (el instanceof HTMLElement) {
+            el.style.display = el.style.display || 'block';
+            
+            // Ensure element isn't outside viewport
+            if (el.getBoundingClientRect) {
+              const rect = el.getBoundingClientRect();
+              if (rect.width === 0 || rect.height === 0) {
+                el.style.width = el.style.width || 'auto';
+                el.style.height = el.style.height || 'auto';
+              }
+            }
+          }
+        });
+        
+        // Make sure the CV container has correct styling
+        const cvContainer = container.querySelector('.cv-container');
+        if (cvContainer instanceof HTMLElement) {
+          cvContainer.style.width = '210mm';
+          cvContainer.style.minHeight = '297mm';
+          cvContainer.style.display = 'flex';
+          cvContainer.style.flexDirection = 'column';
+          cvContainer.style.overflow = 'visible';
+          cvContainer.style.backgroundColor = '#ffffff';
+        }
+      };
+        // Apply additional preparations
+      prepareDocumentForPDF(clonedContainer);
+      
+      // Try with optimized settings to avoid errors      const canvas = await html2canvas(clonedContainer, {
+        useCORS: true,
+        allowTaint: true,
+        logging: true,
+        background: '#ffffff',
+        // Apply any additional options compatible with html2canvas
+        onclone: (doc: Document) => {
+          // Further optimize the document before rendering
+          const scripts = doc.querySelectorAll('script');
+          scripts.forEach(script => script.remove());
+          
+          // Remove any iframe elements
+          const iframes = doc.querySelectorAll('iframe');
+          iframes.forEach(iframe => iframe.remove());
+          
+          // Remove any elements with gradient backgrounds
+          const allElements = doc.querySelectorAll('*');
+          allElements.forEach(el => {
+            if (el instanceof HTMLElement) {
+              const style = window.getComputedStyle(el);
+              if (style.backgroundImage.includes('gradient')) {
+                el.style.backgroundImage = 'none';
+                if (el.classList.contains('header')) {
+                  el.style.backgroundColor = '#0b1629';
+                } else {
+                  el.style.backgroundColor = '#ffffff';
+                }
+              }
+            }
+          });
+        }
+      });
+      
+      console.log('Canvas created successfully', canvas.width, canvas.height);
+      
+      // Clean up the cloned container
+      try {
+        document.body.removeChild(clonedContainer);
+      } catch (err) {
+        console.warn('Error removing cloned container:', err);
+      }
+      
+      return await finalizeWithCanvas(canvas, pdfDoc, pageWidth, pageHeight);
+    } catch (canvasError) {
+      console.error('Error with html2canvas:', canvasError);
+      // Fallback method - create a simplified PDF
+      return createSimplifiedPDF();
+    } finally {
+      // Clean up iframe if it exists
+      try {
+        if (iframe && document.body.contains(iframe)) {
+          document.body.removeChild(iframe);
+        }
+      } catch (err) {
+        console.warn('Error removing iframe:', err);
+      }
+    }
+    
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    
+    // Try to clean up iframe if it exists
+    try {
+      if (iframe && document.body.contains(iframe)) {
+        document.body.removeChild(iframe);
+      }
+      const existingIframe = document.querySelector('iframe[style*="-9999px"]');
+      if (existingIframe && existingIframe.parentNode) {
+        existingIframe.parentNode.removeChild(existingIframe);
+      }
+    } catch (cleanupError) {
+      console.warn('Error during cleanup:', cleanupError);
+    }
+    
+    // Try one more fallback approach just in case
+    try {
+      const simpleFileName = await createSimplifiedPDF();
+      console.log('Used fallback simplified PDF generator after error');
+      return simpleFileName;
+    } catch (finalError) {
+      console.error('All PDF generation attempts failed:', finalError);
+      throw new Error(`Failed to generate PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+};
+
+// A/B testing strategy function for PDF generation
+export const generatePDFWithABTesting = async (debug: boolean = false): Promise<string> => {
+  if (debug && window.pdfDebugLog) {
+    window.pdfDebugLog("Starting A/B testing PDF generation strategy");
+  }
+  
+  // Try different methods in sequence until one succeeds
+  try {
+    // Method A: Standard generation
+    if (debug && window.pdfDebugLog) {
+      window.pdfDebugLog("Trying Method A: Standard generation");
+    }
+    return await generateModernPortfolioPDF(debug);
+  } catch (errorA) {
+    console.error("Method A failed:", errorA);
+    
+    // Method B: High-quality settings with a different approach
+    if (debug && window.pdfDebugLog) {
+      window.pdfDebugLog("Method A failed. Trying Method B: Direct HTML approach");
+    }
+    
+    try {
+      // Method B: Try a direct approach with a full-page screenshot
+      const pdfDoc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+        compress: true
+      });
+      
+      // Get the CV template HTML content
+      const response = await fetch('./cv-template.html');
+      if (!response.ok) {
+        throw new Error('Failed to fetch CV template');
+      }
+      
+      // Create a temporary container to hold the CV content
+      const tempContainer = document.createElement('div');
+      tempContainer.style.position = 'fixed';
+      tempContainer.style.top = '0';
+      tempContainer.style.left = '0';
+      tempContainer.style.width = '210mm';
+      tempContainer.style.height = '297mm';
+      tempContainer.style.zIndex = '-9999';
+      tempContainer.style.backgroundColor = '#ffffff';
+      tempContainer.style.overflow = 'hidden';
+      tempContainer.innerHTML = await response.text();
+      document.body.appendChild(tempContainer);
+      
+      // Force layout calculation
+      void tempContainer.offsetHeight;
+      
+      // Wait for images to load
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      try {
+        // Use html2canvas with simpler settings
+        const canvas = await html2canvas(tempContainer, {
+          useCORS: true,
+          background: '#ffffff'
+        });
+        
+        // Clean up
+        document.body.removeChild(tempContainer);
+        
+        // Generate PDF from canvas
+        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+        const pageWidth = pdfDoc.internal.pageSize.getWidth();
+        const imgWidth = pageWidth;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        
+        pdfDoc.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+        
+        // Save the PDF
+        const fileName = 'Juan_Gerardo_Avendaño_Calderón_Method_B_CV_2025.pdf';
+        pdfDoc.save(fileName);
+        return fileName;
+      } catch (canvasError) {
+        // Clean up if there was an error
+        if (document.body.contains(tempContainer)) {
+          document.body.removeChild(tempContainer);
+        }
+        throw canvasError;
+      }
+    } catch (errorB) {
+      console.error("Method B failed:", errorB);
+      
+      // Method C: Try using DOM elements directly
+      if (debug && window.pdfDebugLog) {
+        window.pdfDebugLog("Method B failed. Trying Method C: Direct DOM approach");
+      }
+      
+      try {
+        // Create a new iframe with the template
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'fixed';
+        iframe.style.top = '-9999px';
+        iframe.style.left = '-9999px';
+        iframe.style.width = '210mm';
+        iframe.style.height = '297mm';
+        document.body.appendChild(iframe);
+        
+        // Wait for iframe to be ready
+        await new Promise(resolve => {
+          iframe.onload = resolve;
+          iframe.src = 'about:blank';
+        });
+        
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+        if (!iframeDoc) throw new Error('Cannot access iframe document');
+        
+        // Create a base tag to help with resource loading
+        const baseTag = iframeDoc.createElement('base');
+        baseTag.href = window.location.href;
+        
+        // Get the CV template
+        const response = await fetch('./cv-template.html');
+        const html = await response.text();
+        
+        // Simplify the template by removing problematic elements
+        const simplifiedHtml = html
+          .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Remove scripts
+          .replace(/background(?:-image)?:\s*(?:linear|radial)-gradient\([^)]+\)/g, 'background: #ffffff') // Replace gradients
+          .replace(/transform:[^;]+;/g, '') // Remove transforms
+          .replace(/transition:[^;]+;/g, '') // Remove transitions
+          .replace(/@keyframes[^{]+{[^}]+}/g, ''); // Remove keyframes
+        
+        // Write to iframe
+        iframeDoc.open();
+        iframeDoc.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            ${baseTag.outerHTML}
+            <meta charset="UTF-8">
+            <title>CV PDF</title>
+            <style>
+              body, html {
+                margin: 0;
+                padding: 0;
+                width: 210mm;
+                height: 297mm;
+                background: white;
+              }
+              * {
+                box-sizing: border-box;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+              }
+              .cv-container {
+                width: 210mm !important;
+                height: auto !important;
+                min-height: 297mm !important;
+                background: white !important;
+                overflow: visible !important;
+                display: flex !important;
+                flex-direction: column !important;
+              }
+              .header {
+                background-color: #0b1629 !important;
+                color: white !important;
+                padding: 30px 35px !important;
+              }
+              img {
+                width: auto !important;
+                height: auto !important;
+                min-width: 100px !important;
+                min-height: 100px !important;
+              }
+            </style>
+          </head>
+          <body>
+            ${simplifiedHtml}
+          </body>
+          </html>
+        `);
+        iframeDoc.close();
+        
+        // Wait for resources to load
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        
+        // Create PDF directly
+        const pdfDoc = new jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4',
+          compress: true
+        });
+        
+        const element = iframeDoc.querySelector('.cv-container') as HTMLElement;
+        if (!element) throw new Error('CV container not found');
+        
+        // Try html2canvas on this simplified version
+        const canvas = await html2canvas(element, {
+          useCORS: true,
+          background: 'white',
+          logging: false
+        });
+        
+        // Add to PDF
+        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+        const pageWidth = pdfDoc.internal.pageSize.getWidth();
+        const imgWidth = pageWidth;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        
+        pdfDoc.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+        
+        // Save PDF
+        const fileName = 'Juan_Gerardo_Avendaño_Calderón_Method_C_CV_2025.pdf';
+        pdfDoc.save(fileName);
+        
+        // Clean up
+        document.body.removeChild(iframe);
+        
+        return fileName;
+      } catch (errorC) {
+        console.error("Method C failed:", errorC);
+        
+        // Method D: Final fallback to simplified PDF
+        if (debug && window.pdfDebugLog) {
+          window.pdfDebugLog("Method C failed. Trying Method D: Simplified PDF");
+        }
+        
+        return await createSimplifiedPDF();
+      }
+    }
+  }
+};

@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juan Gerardo Avendaño Calderón - CV</title>
+    <!-- Load fonts preemptively to ensure they're available -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #fff;
+            width: 210mm;
+            min-height: 297mm;
+        }
+        
+        /* PDF Container */
+        .cv-container {
+            width: 210mm;
+            min-height: 297mm;
+            background: #fff;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+          /* Header - Simplified for PDF */
+        .header {
+            background-color: #0b1629 !important;
+            color: white;
+            padding: 20px;
+            width: 100%;
+            overflow: visible;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: nowrap;
+        }
+        
+        .profile-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #3b82f6;
+        }
+        
+        .header-info {
+            flex: 1;
+        }
+        
+        .header-info h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: white;
+        }
+        
+        .header-info h2 {
+            font-size: 14px;
+            font-weight: 400;
+            margin-bottom: 10px;
+            color: #4f91ff;
+        }
+        
+        .contact-details {
+            font-size: 12px;
+            color: #e2e8f0;
+        }
+        
+        .contact-item {
+            margin-bottom: 5px;
+        }
+        
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex: 1;
+        }
+        
+        .left-column {
+            flex: 3;
+            padding: 20px;
+            background-color: white;
+        }
+        
+        .right-column {
+            flex: 1;
+            padding: 20px;
+            background-color: #f1f5fa;
+            border-left: 2px solid #e2e8f0;
+        }
+        
+        /* Sections */
+        .section {
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0b1730;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 5px;
+        }
+        
+        /* Experience */
+        .experience-item {
+            margin-bottom: 15px;
+        }
+        
+        .experience-title {
+            font-weight: 600;
+            color: #1a365d;
+        }
+        
+        .experience-company {
+            color: #3b82f6;
+            font-weight: 500;
+        }
+        
+        .experience-date {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+        
+        .experience-description {
+            font-size: 13px;
+            color: #334155;
+        }
+        
+        /* Projects */        .project-item {
+            margin-bottom: 10px;
+            padding: 12px;
+            background-color: #f8fafc;
+            border-left: 3px solid #3b82f6;
+        }
+        
+        .project-title {
+            font-weight: 500;
+            color: #1a365d;
+        }
+        
+        .tech-tags {
+            margin-top: 5px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .tech-tag {
+            font-size: 10px;
+            background-color: #e0eafc;
+            color: #3b82f6;
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        /* Right Column */
+        .sidebar-section {
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0b1730;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 3px;
+        }
+        
+        .skill-item {
+            margin-bottom: 8px;
+        }
+        
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+        
+        .skill-name {
+            font-weight: 600;
+        }
+        
+        .skill-bar {
+            height: 5px;
+            background-color: #e2e8f0;
+            border-radius: 3px;
+            margin-bottom: 10px;
+        }
+        
+        .skill-progress {
+            height: 100%;
+            background-color: #3b82f6;
+            border-radius: 3px;
+        }
+        
+        .language-item, .education-item, .cert-item {
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+        
+        .language-name, .education-title, .cert-title {
+            font-weight: 600;
+            color: #1a365d;
+        }
+        
+        /* Footer */
+        .footer {
+            padding: 15px;
+            background-color: #0b1629;
+            color: white;
+            font-size: 10px;
+            text-align: center;
+        }
+        
+        .footer p {
+            margin-bottom: 2px;
+            color: #e2e8f0;
+        }
+        
+        .footer-highlight {
+            color: #4f91ff;
+        }
+        
+        /* Print Specific Styles */
+        @media print {
+            html, body {
+                width: 210mm;
+                height: 297mm;
+                margin: 0;
+                padding: 0;
+            }
+            
+            .cv-container {
+                width: 210mm;
+                min-height: 297mm;
+                margin: 0;
+                box-shadow: none;
+            }
+            
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cv-container">        <!-- Header -->
+        <div class="header">
+            <img src="public/assets/FB_IMG_1745735360797.jpg" class="profile-photo" alt="Juan Gerardo Avendaño Calderón">
+            <div class="header-info">
+                <h1>Juan Gerardo Avendaño Calderón</h1>
+                <h2>Full-Stack Developer & Data Analyst</h2>
+                <div class="contact-summary">
+                    Dedicated developer with expertise in creating responsive and scalable applications.
+                </div>
+            </div><div class="contact-details">
+                <div class="contact-item">
+                    <span>gera.ave2@gmail.com</span>
+                </div>
+                <div class="contact-item">
+                    <span>+52 555 102 1657</span>
+                </div>
+                <div class="contact-item">
+                    <span>linkedin.com/in/gerardo-avendaño-0b78008b</span>
+                </div>
+                <div class="contact-item">
+                    <span>github.com/sieke13</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Column - Main Content -->
+            <div class="left-column">
+                <!-- Professional Summary -->
+                <div class="section">
+                    <h2 class="section-title">Professional Summary</h2>
+                    <p>Full-Stack Developer with expertise in React.js, Node.js, and database technologies. Skilled in creating responsive, user-friendly web applications and implementing data-driven solutions. Passionate about leveraging technology to solve complex problems and deliver exceptional user experiences.</p>
+                </div>
+
+                <!-- Experience Section -->
+                <div class="section">
+                    <h2 class="section-title">Professional Experience</h2>
+                      <div class="experience-item">
+                        <div class="experience-title">Full-Stack Developer</div>
+                        <div class="experience-company">Freelance Developer</div>
+                        <div class="experience-date">Jan 2024 - Present</div>
+                        <div class="experience-description">
+                            <ul>
+                                <li>Developed custom responsive web applications for multiple clients using React.js, increasing user engagement by 30%</li>
+                                <li>Designed and implemented RESTful APIs with Node.js and Express, improving data retrieval speeds by 40%</li>
+                                <li>Created efficient database structures with PostgreSQL and MongoDB for various client projects</li>
+                                <li>Managed projects independently from concept to deployment, ensuring on-time delivery and client satisfaction</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="experience-item">
+                        <div class="experience-title">Junior Web Developer</div>
+                        <div class="experience-company">Digital Creations</div>
+                        <div class="experience-date">May 2023 - Dec 2024</div>
+                        <div class="experience-description">
+                            <ul>
+                                <li>Created and maintained responsive web pages using HTML5, CSS3, and JavaScript</li>
+                                <li>Assisted in implementing UI/UX improvements resulting in 25% higher conversion rates</li>
+                                <li>Participated in code reviews and implemented feedback to improve code quality</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>                <!-- Projects Section -->                <div class="section" style="margin-top: 20px; margin-bottom: 25px;">
+                    <h2 class="section-title" style="text-transform: uppercase; font-size: 16px; letter-spacing: 0.5px; color: #1a202c;">KEY PROJECTS</h2>
+                      <style>                        
+                        /* Project styling */
+                        .projects-section {
+                            margin-bottom: 20px;
+                        }
+                        
+                        .projects-category {
+                            margin-bottom: 15px;
+                        }
+                        
+                        .category-title {
+                            font-size: 14px;
+                            font-weight: 600;
+                            color: #2d3748;
+                            margin-bottom: 10px;
+                            padding-left: 8px;
+                            border-left: 3px solid #3b82f6;
+                        }
+                        
+                        .projects-grid {
+                            display: grid;
+                            grid-template-columns: repeat(2, 1fr);
+                            gap: 15px;
+                            margin-bottom: 15px;
+                        }
+                        
+                        .project-item {
+                            margin-bottom: 0;
+                            height: auto;
+                            min-height: 120px;
+                            border-radius: 6px;
+                            border: 1px solid #e5e7eb;
+                            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+                            padding: 16px;
+                            background-color: #ffffff;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: space-between;
+                        }
+                          
+                        .project-title {
+                            font-weight: 600;
+                            color: #1e40af;
+                            margin-bottom: 8px;
+                            border-bottom: 1px solid #e5e7eb;
+                            padding-bottom: 8px;
+                            font-size: 14px;
+                        }
+                        
+                        .project-item p {
+                            font-size: 12px;
+                            margin: 0 0 12px;
+                            line-height: 1.5;
+                            color: #4b5563;
+                            flex-grow: 1;
+                        }
+                        
+                        .project-links {
+                            margin-bottom: 8px;
+                            font-size: 11px;
+                        }
+                        
+                        .project-links a {
+                            color: #3b82f6;
+                            text-decoration: none;
+                            margin-right: 12px;
+                        }
+                        
+                        .project-links a:hover {
+                            text-decoration: underline;
+                        }
+                        
+                        .tech-tags {
+                            margin-top: auto;
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 6px;
+                        }
+                        
+                        .tech-tag {
+                            font-size: 10px;
+                            background-color: #dbeafe;
+                            color: #2563eb;
+                            padding: 2px 8px;
+                            border-radius: 4px;
+                            font-weight: 500;
+                        }
+                        
+                        /* Featured project styling */
+                        .featured-tag {
+                            position: absolute;
+                            top: -8px;
+                            right: 10px;
+                            background-color: #fef3c7;
+                            color: #92400e;
+                            font-size: 9px;
+                            font-weight: 600;
+                            padding: 2px 8px;
+                            border-radius: 4px;
+                            border: 1px solid #fde68a;
+                        }
+                    </style>
+                    
+                    <!-- Featured Projects -->
+                    <div class="projects-category">
+                        <h3 class="category-title">Featured Projects</h3>
+                        <div class="projects-grid">
+                            <div class="project-item" style="position: relative;">
+                                <span class="featured-tag">FEATURED</span>
+                                <div class="project-title">BingBong Mood Tracker</div>
+                                <p>A comprehensive personal wellness application designed to help users track and improve their mental health habits with intuitive visualizations.</p>
+                                <div class="project-links">
+                                    <a href="https://bing-bong-mood-tracker-pozd.onrender.com" target="_blank">Live Demo</a>
+                                    <a href="https://github.com/sieke13/bing-bong-mood-tracker" target="_blank">GitHub</a>
+                                </div>
+                                <div class="tech-tags">
+                                    <span class="tech-tag">React</span>
+                                    <span class="tech-tag">TypeScript</span>
+                                    <span class="tech-tag">PostgreSQL</span>
+                                    <span class="tech-tag">Node.js</span>
+                                    <span class="tech-tag">Express</span>
+                                </div>
+                            </div>
+
+                            <div class="project-item" style="position: relative;">
+                                <span class="featured-tag">FEATURED</span>
+                                <div class="project-title">Google Books Search Engine</div>
+                                <p>A full-stack application allowing users to search for books using the Google Books API and save favorites to a personal collection.</p>
+                                <div class="project-links">
+                                    <a href="https://challenge18-main.onrender.com/" target="_blank">Live Demo</a>
+                                    <a href="https://github.com/sieke13/google-books-search" target="_blank">GitHub</a>
+                                </div>
+                                <div class="tech-tags">
+                                    <span class="tech-tag">React</span>
+                                    <span class="tech-tag">GraphQL</span>
+                                    <span class="tech-tag">MongoDB</span>
+                                    <span class="tech-tag">JWT</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Full-Stack Projects -->
+                    <div class="projects-category">
+                        <h3 class="category-title">Full-Stack Projects</h3>
+                        <div class="projects-grid">
+                            <div class="project-item">
+                                <div class="project-title">Weather Dashboard</div>
+                                <p>Responsive weather application providing current conditions and 5-day forecasts with search history and data persistence.</p>
+                                <div class="tech-tags">
+                                    <span class="tech-tag">JavaScript</span>
+                                    <span class="tech-tag">OpenWeather API</span>
+                                    <span class="tech-tag">LocalStorage</span>
+                                </div>
+                            </div>
+                            
+                            <div class="project-item">
+                                <div class="project-title">E-commerce Platform</div>
+                                <p>Full-featured online store with secure payments, inventory management, and admin dashboard.</p>
+                                <div class="tech-tags">
+                                    <span class="tech-tag">React</span>
+                                    <span class="tech-tag">Node.js</span>
+                                    <span class="tech-tag">PostgreSQL</span>
+                                    <span class="tech-tag">Redux</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Development Tools -->
+                    <div class="projects-category">
+                        <h3 class="category-title">Development Tools</h3>
+                        <div class="projects-grid">
+                            <div class="project-item">
+                                <div class="project-title">Professional README Generator</div>
+                                <p>Command-line application that dynamically generates professional README.md files for GitHub projects based on user input.</p>
+                                <div class="tech-tags">
+                                    <span class="tech-tag">JavaScript</span>
+                                    <span class="tech-tag">Node.js</span>
+                                    <span class="tech-tag">Inquirer.js</span>
+                                </div>
+                            </div>
+                            
+                            <div class="project-item">
+                                <div class="project-title">Employee Management System</div>
+                                <p>Command-line application for managing company employee database with features to view, add, and update records.</p>
+                                <div class="tech-tags">
+                                    <span class="tech-tag">Node.js</span>
+                                    <span class="tech-tag">MySQL</span>
+                                    <span class="tech-tag">Inquirer.js</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Sidebar -->
+            <div class="right-column">
+                <!-- Skills -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Technical Skills</h3>
+                    
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">React.js</span>
+                            <span class="skill-level">Advanced</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">Node.js</span>
+                            <span class="skill-level">Advanced</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">TypeScript</span>
+                            <span class="skill-level">Intermediate</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">PostgreSQL</span>
+                            <span class="skill-level">Advanced</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">Python</span>
+                            <span class="skill-level">Intermediate</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 70%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">HTML/CSS/JS</span>
+                            <span class="skill-level">Advanced</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 95%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Languages -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Languages</h3>
+                    <div class="language-item">
+                        <span class="language-name">Spanish:</span>
+                        <span class="language-level">Native</span>
+                    </div>
+                    <div class="language-item">
+                        <span class="language-name">English:</span>
+                        <span class="language-level">Advanced</span>
+                    </div>
+                </div>
+                
+                <!-- Education -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Education</h3>
+                    <div class="education-item">
+                        <div class="education-title">Full-Stack Web Development</div>
+                        <div class="education-details">
+                            Tecnológico de Monterrey - 2024-2025<br>
+                            Intensive Bootcamp Program
+                        </div>
+                    </div>
+                    <div class="education-item">
+                        <div class="education-title">Oil Engineering</div>
+                        <div class="education-details">
+                            IPN Instituto Politécnico Nacional<br>
+                            Bachelor's Degree (In Progress)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certifications -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Certifications</h3>
+                    <div class="cert-item">
+                        <div class="cert-title">React.js Professional</div>
+                        <div class="cert-details">Advanced React development</div>
+                    </div>
+                    <div class="cert-item">
+                        <div class="cert-title">Database Design</div>
+                        <div class="cert-details">SQL and NoSQL architecture</div>
+                        <div class="cert-details">MongoDB</div>
+                    </div>
+                    <div class="cert-item">
+                        <div class="cert-title">Agile Development</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><span class="footer-highlight">Juan Gerardo Avendano Caldeorn</span> - Always up to date with latest projects and skills</p>
+            <p>Available for remote opportunities worldwide | Open to relocation | Ready to start immediately</p>
+            <p>Last updated: June 2025</p>
+        </div>
+    </div>
+</body>
+</html>

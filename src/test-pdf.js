@@ -1,0 +1,1 @@
+﻿console.log('Testing PDF generation...'); import('./utils/pdfGenerator2.js').then(m => m.generatePDFWithABTesting(true).then(result => console.log('PDF generated:', result)).catch(err => console.error('Error:', err)));
