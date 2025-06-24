@@ -4,10 +4,9 @@ import { SiTypescript, SiPostgresql, SiRender, SiTailwindcss } from 'react-icons
 
 const Resume: React.FC = () => {
   const [downloadError, setDownloadError] = useState<string | null>(null);
-  
-  const handleResumeClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const handleResumeClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     // Check if file exists by making a HEAD request
-    fetch('dist/assets/Juan Gerardo Avendaño Calderón - CV.pdf', { method: 'HEAD' })
+    fetch('./assets/Juan Gerardo Avendaño Calderón - Full-Stack Developer & Data AnalystENG.pdf', { method: 'HEAD' })
       .then(response => {
         if (!response.ok) {
           e.preventDefault();
@@ -73,9 +72,8 @@ const Resume: React.FC = () => {
         <h2 className="section-title">Resume & Skills</h2>
         <p className="section-subtitle">
           Comprehensive overview of my technical expertise and professional capabilities as a Full-Stack Developer.
-        </p>        <div className="resume-header">          <div className="resume-actions">
-            <a 
-              href="/public/assets/Juan Gerardo Avendaño Calderón - Full-Stack Developer & Data AnalystENG.pdf" 
+        </p>        <div className="resume-header">          <div className="resume-actions">            <a 
+              href="./assets/Juan Gerardo Avendaño Calderón - CV.pdf" 
               download 
               className="download-button"
               onClick={handleResumeClick}
